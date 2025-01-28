@@ -3,6 +3,7 @@ import {useCallback, useEffect, useState} from "react";
 import * as Font from "expo-font";
 import {Inter_400Regular, Inter_600SemiBold, Inter_800ExtraBold} from "@expo-google-fonts/inter";
 import {SessionProvider} from "@/app/providers/SessionProvider";
+import "./global.css"
 
 SplashScreen.preventAutoHideAsync()
 

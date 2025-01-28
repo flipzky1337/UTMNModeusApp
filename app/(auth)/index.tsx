@@ -2,13 +2,15 @@ import {useSession} from "@/app/providers/authctx";
 import {Pressable, View, Text, Button} from "react-native";
 import AuthBrowser from "@/app/components/AuthBrowser";
 import {useContext, useState} from "react";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 export default function Auth() {
     const {signIn} = useSession()
+    const {top} = useSafeAreaInsets();
     const [showBrowser, setShowBrowser] = useState(false);
 
     return (
-        <View style={{height: '100%', width: '100%'}}>
+        <View style={{height: '100%', width: '100%', marginTop: top}}>
             {/*<Pressable onPress={() => {setShowBrowser(true);}}>*/}
             {/*    <Text>*/}
             {/*        Авторизоваться*/}

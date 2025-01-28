@@ -33,12 +33,13 @@ export function useStorageState(key: string): UseStateHook<string> {
     useEffect(() => {
 
         getItemAsync(key).then(value => {
-            if (value) {
-                let payload = jwtDecode<UserJwt>(value, {})
-                setState(payload.person_id)
-            } else {
-                setState(value)
-            }
+            // if (value) {
+            //     let payload = jwtDecode<UserJwt>(value, {})
+            //     setState(payload.person_id)
+            // } else {
+            //     setState(value)
+            // }
+            setState(value)
         }).catch((error: any) => {
             console.log("Error: ", error);
         })
@@ -48,14 +49,18 @@ export function useStorageState(key: string): UseStateHook<string> {
     // Set
     const setValue = useCallback(
         (value: string | null) => {
-            if (value) {
-                let payload = jwtDecode<UserJwt>(value, {})
-                setState(payload.person_id)
-                setStorageItemAsync(key, value);
-            } else {
-                setState(value)
-                setStorageItemAsync(key, value);
-            }
+            // if (value) {
+            //     let payload = jwtDecode<UserJwt>(value, {})
+            //     setState(payload.person_id)
+            //     setStorageItemAsync(key, value);
+            // } else {
+            //     setState(value)
+            //     setStorageItemAsync(key, value);
+            // }
+
+            setState(value)
+            setStorageItemAsync(key, value)
+
         },
         [key]
     );
