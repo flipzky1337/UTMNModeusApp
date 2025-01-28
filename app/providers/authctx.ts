@@ -1,13 +1,16 @@
-import {createContext, useContext} from "react";
+import {createContext, useContext, useEffect} from "react";
+import {useRouter, useSegments} from "expo-router";
 
-const AuthContext = createContext<{
-  signIn: () => void;
+export const AuthContext = createContext<{
+  signIn: (token: string) => void;
   signOut: () => void;
-  token?: string | null;
+  session?: string | null;
+  isLoading: boolean;
 }>({
   signIn: () => null,
   signOut: () => null,
-  token: null,
+  session: null,
+  isLoading: false,
 })
 
 // This hook can be used to access the user info.
@@ -20,6 +23,25 @@ export function useSession() {
   }
 
   return value;
+}
+
+export function useProtectedRoute(session: string | null) {
+  const segments = useSegments()
+  const router = useRouter()
+
+  useEffect(() => {
+    const inAuthGroup = segments[0] === "(auth)"
+
+    if (!session && !inAuthGroup) {
+
+      router.replace("/(auth)")
+
+    } else if (session && inAuthGroup) {
+
+      router.replace("/(app)")
+
+    }
+  }, [session, segments])
 }
 
 

@@ -1,7 +1,8 @@
-import {Stack, SplashScreen} from "expo-router";
+import {Stack, SplashScreen, Slot} from "expo-router";
 import {useCallback, useEffect, useState} from "react";
 import * as Font from "expo-font";
 import {Inter_400Regular, Inter_600SemiBold, Inter_800ExtraBold} from "@expo-google-fonts/inter";
+import {SessionProvider} from "@/app/providers/SessionProvider";
 
 SplashScreen.preventAutoHideAsync()
 
@@ -30,9 +31,9 @@ export default function RootLayout() {
   }
 
   return (
-      <Stack>
-        <Stack.Screen name={'(tabs)'} options={{headerShown: false}}/>
-      </Stack>
+      <SessionProvider>
+        <Slot/>
+      </SessionProvider>
   )
   // return <Stack/>
 }

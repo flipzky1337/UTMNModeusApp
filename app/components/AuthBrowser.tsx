@@ -1,9 +1,8 @@
 import { WebView } from "react-native-webview";
-import {useState} from "react";
-import {Button, View} from "react-native";
-import * as SecureStore from "expo-secure-store";
+import {Dispatch, SetStateAction} from "react";
+import {View} from "react-native";
 
-const AuthBrowser = ({showWebView, setShowWebView}) => {
+const AuthBrowser = ({signInFunction, setShow}: {signInFunction: (token: string) => void, setShow: Dispatch<SetStateAction<boolean>>}) => {
     const authUrl = 'https://utmn.modeus.org';
     
     const handleNavigationStateChange = (navState: { url: any; }) => {
@@ -15,21 +14,16 @@ const AuthBrowser = ({showWebView, setShowWebView}) => {
             );
 
             if (token) {
-                SecureStore.setItem('modeus_token', token)
-                console.log(SecureStore.getItem('modeus_token'))
-                setShowWebView(false);
+                signInFunction(token);
+                setShow(false);
+                console.log('authorized');
             }
         }
     };
 
     return (
-        <View style={{flex: 1, width: '100%'}} >
-            {
-                showWebView &&
-                (<WebView source={{uri: authUrl}} onNavigationStateChange={handleNavigationStateChange} incognito={true}>
-
-                </WebView>)
-            }
+        <View style={{position: 'absolute', width: '100%', height: '100%'}} >
+                <WebView source={{uri: authUrl}} onNavigationStateChange={handleNavigationStateChange}/>
         </View>
     )
 
