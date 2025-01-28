@@ -1,0 +1,1 @@
+type useStateHook<T> = [[boolean | ]]
