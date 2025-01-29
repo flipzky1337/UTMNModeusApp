@@ -6,6 +6,7 @@ import {useSession} from "@/app/providers/authctx";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {useEffect, useRef, useState} from "react";
 import {checkTokenExpiration} from "@/app/functions/JWTFunctions";
+import {AntDesign} from "@expo/vector-icons";
 
 export default function RootLayout() {
 
@@ -14,16 +15,16 @@ export default function RootLayout() {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        console.log('App has come to the foreground!');
-        if (session) { // it is logged in anyways - user shouldn't be here without session
-          if (checkTokenExpiration(session)) { // perform signout on app active if jwt is expired, no alerts - badass.
-            signOut();
-          }
+
+    if (session && checkTokenExpiration(session)) { // basic useeffect check yesyes
+      signOut();
+    }
+
+    const subscription = AppState.addEventListener('change', nextAppState => { // signout if expired on each active state
+      if (nextAppState === 'active') {
+        console.log('window active')
+        if (session && checkTokenExpiration(session)) { // it is logged in anyways - user shouldn't be here (app) without session, signout on expiry\
+          signOut();
         }
       }
 
@@ -41,8 +42,7 @@ export default function RootLayout() {
       <Drawer drawerContent={CustomDrawerContext}>
         <Drawer.Screen name={'index'} options={{
           headerTitle: 'Modeus',
-          // headerLeft: () => <Pressable><Ionicons name={'menu-outline'} size={32}/></Pressable>,
-          // headerRight: () => <Pressable className={'mr-4'}><AntDesign name={'user'} size={24}/></Pressable>,
+          headerRight: () => <Pressable className={'mr-4'}><AntDesign name={'filter'} size={24}/></Pressable>, // TODO: correct margin & sizing
         }}>
 
         </Drawer.Screen>
@@ -56,7 +56,6 @@ export default function RootLayout() {
 function CustomDrawerContext(props: any) {
 
   const {bottom} = useSafeAreaInsets();
-
   const {signOut} = useSession()
 
   return (
