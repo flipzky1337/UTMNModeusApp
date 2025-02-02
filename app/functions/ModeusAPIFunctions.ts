@@ -1,6 +1,5 @@
 import {fetch} from "expo/fetch";
 import {isLaterHHMM} from "@/app/functions/UtilityFunctions";
-import {read} from "node:fs";
 
 type getCalendarEventsParams = {
   token: string
@@ -18,17 +17,51 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
       return [];
     }
 
+    const eventRooms = response['event-rooms'];
+    for (const eventRoom of eventRooms) {
+      for (room of response['rooms']) {
+        if (room._links.self.href == eventRoom._links.room.href) {
+          eventRoom.customLocation = room.name;
+          break;
+        }
+      }
+    }
+
+    const eventLocations = response['event-locations'];
+    eventLocations.map((eventLocation: any) => {
+      if (eventLocation.customLocation) {
+        return;
+      }
+
+      for (const eventRoom of eventRooms) {
+        if (eventRoom._links.self.href == eventLocation._links['event-rooms'].href) {
+          eventLocation.customLocation = eventRoom.customLocation;
+          break;
+        }
+      }
+    });
+
+
+    console.log(eventLocations);
+
+
     // @ts-ignore bro u fine?
     final.push({title: response.events[0].startsAtLocal.split('T')[0], data: []})
 
     // @ts-ignore events prop check is up 4 lines ^^
     response.events.forEach((event, index) => {
       const dateString = <string>event.startsAtLocal.split('T')[0];
+
+      // @ts-ignore
+      const eventLocation = response['event-locations'][index].customLocation;
+
       const readyObj = {
         title: event.name,
+        location: eventLocation,
         timeStart: event.startsAtLocal.split('T')[1],
         timeEnd: event.endsAtLocal.split('T')[1],
       };
+
 
       let flagFound = false;
       for (const day of final) {
@@ -52,6 +85,7 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
         }
       }
 
+
       if (!flagFound) {
         final.unshift({title: dateString, data: [readyObj]})
       }
@@ -60,6 +94,8 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
 
     return final;
   }
+
+
 
   // TODO: alert when token expired
   return await fetch('https://utmn.modeus.org/schedule-calendar-v2/api/calendar/events/search', {
