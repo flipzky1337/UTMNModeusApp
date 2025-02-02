@@ -14,6 +14,9 @@ interface AgendaItemType {
 
 export default function Index() {
   const {session} = useSession();
+  // @ts-ignore it's cant be null if session is true
+  const currentUser = getUserID(session);
+
   const today = new Date().toISOString().split('T')[0];
   const [agendaItems, setAgendaItems] = useState([] as AgendaItemType[]);
 
@@ -31,10 +34,15 @@ export default function Index() {
 
   const onMonthChange = useCallback(({dateString}: DateData) => {
     const {timeMin, timeMax} = getMonthStartEnd(new Date(dateString).getFullYear(), new Date(dateString).getMonth());
+    getCalendarEvents({
+      token: session,
+      timeMin: timeMin,
+      timeMax: timeMax,
+      attendeePersonId: [currentUser]
+    }).then(r => setAgendaItems(r));
   }, []);
 
   if (session) { // fetch data on useeffect if session
-    const currentUser = getUserID(session);
     useEffect(() => {
 
       if (currentUser) {

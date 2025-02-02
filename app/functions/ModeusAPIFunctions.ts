@@ -41,23 +41,43 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
       }
     });
 
+    const attendees = response['event-attendees'];
+    for (const attendee of attendees) {
+      for (const person of response.persons) {
+        if (person._links.self.href == attendee._links.person.href) {
+          attendee.name = person.fullName;
+          break;
+        }
+      }
+    }
 
-    console.log(eventLocations);
+    const eventOrganizers = response['event-organizers'];
+    eventOrganizers.map((eventOrganizer: any) => {
+      for (const attendee of attendees) {
+        if (!eventOrganizer._links['event-attendees']) {
+          return;
+        }
 
+        if (eventOrganizer._links['event-attendees'].href == attendee._links.self.href) {
+          eventOrganizer.name = attendee.name;
+          break;
+        }
+      }
+    });
 
-    // @ts-ignore bro u fine?
     final.push({title: response.events[0].startsAtLocal.split('T')[0], data: []})
 
-    // @ts-ignore events prop check is up 4 lines ^^
     response.events.forEach((event, index) => {
       const dateString = <string>event.startsAtLocal.split('T')[0];
 
       // @ts-ignore
       const eventLocation = response['event-locations'][index].customLocation;
+      const organizer = response['event-organizers'][index].name;
 
       const readyObj = {
         title: event.name,
         location: eventLocation,
+        organizer: organizer,
         timeStart: event.startsAtLocal.split('T')[1],
         timeEnd: event.endsAtLocal.split('T')[1],
       };
@@ -92,9 +112,11 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
 
     });
 
+    final.sort(function(a, b) {
+      return new Date(a.title) - new Date(b.title);
+    });
     return final;
   }
-
 
 
   // TODO: alert when token expired

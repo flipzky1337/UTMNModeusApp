@@ -29,6 +29,7 @@ function AgendaItem(props: AgendaProps) {
       </View>
       <Text>{item.title}</Text>
       <Text>{item.location}</Text>
+      <Text>{item.organizer}</Text>
     </TouchableOpacity>
 
 
