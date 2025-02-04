@@ -1,4 +1,4 @@
-import {Stack, SplashScreen, Slot} from "expo-router";
+import {Stack, SplashScreen, Slot, useRootNavigationState} from "expo-router";
 import {useCallback, useEffect, useState} from "react";
 import * as Font from "expo-font";
 import {Inter_400Regular, Inter_600SemiBold, Inter_800ExtraBold} from "@expo-google-fonts/inter";
@@ -9,8 +9,8 @@ import {useSafeAreaInsets} from "react-native-safe-area-context";
 SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
-
   const [appReady, setAppReady] = useState(false);
+  const rootNavigationState = useRootNavigationState()
 
   useEffect(() => {
     try {
@@ -28,14 +28,10 @@ export default function RootLayout() {
     }
   }, [appReady]);
 
-  if (!appReady) {
-    return null;
-  }
-
   return (
       <SessionProvider>
         <Slot/>
       </SessionProvider>
-  )
+  );
   // return <Stack/>
 }

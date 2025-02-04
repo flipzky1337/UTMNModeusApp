@@ -1,13 +1,13 @@
 import {PropsWithChildren} from "react";
 import {useStorageState} from "@/app/hooks/useStorageState";
 import {AuthContext, useProtectedRoute} from "./authctx";
-import {useRouter} from "expo-router";
+import {Slot, useRootNavigationState, useRouter} from "expo-router";
 
 export function SessionProvider({children}: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('token');
   const router = useRouter();
 
-  useProtectedRoute(session)
+  // useProtectedRoute(session)
 
   return (
     <AuthContext.Provider
@@ -22,7 +22,7 @@ export function SessionProvider({children}: PropsWithChildren) {
         session,
         isLoading,
       }}>
-      {children}
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 }

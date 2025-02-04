@@ -53,14 +53,21 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
 
     const eventOrganizers = response['event-organizers'];
     eventOrganizers.map((eventOrganizer: any) => {
-      for (const attendee of attendees) {
-        if (!eventOrganizer._links['event-attendees']) {
-          return;
-        }
+      const eventAttendeesLinks = eventOrganizer._links['event-attendees'];
+      if (!eventAttendeesLinks) {
+        return; // Skip if there are no event-attendees links
+      }
 
-        if (eventOrganizer._links['event-attendees'].href == attendee._links.self.href) {
+      // Extract hrefs whether it's an array or a single object
+      const hrefs = Array.isArray(eventAttendeesLinks)
+        ? eventAttendeesLinks.map((link: any) => link.href)
+        : [eventAttendeesLinks.href];
+
+      // Check each attendee for a matching href
+      for (const attendee of attendees) {
+        if (hrefs.includes(attendee._links.self.href)) {
           eventOrganizer.name = attendee.name;
-          break;
+          break; // Stop after the first match
         }
       }
     });
@@ -73,7 +80,6 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
       // @ts-ignore
       const eventLocation = response['event-locations'][index].customLocation;
       const organizer = response['event-organizers'][index].name;
-
       const readyObj = {
         title: event.name,
         location: eventLocation,

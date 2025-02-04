@@ -7,6 +7,7 @@ import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {useEffect, useRef, useState} from "react";
 import {checkTokenExpiration} from "@/app/functions/JWTFunctions";
 import {AntDesign} from "@expo/vector-icons";
+import {Redirect, router} from "expo-router";
 
 export default function RootLayout() {
 
@@ -14,12 +15,17 @@ export default function RootLayout() {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
-  useEffect(() => {
+  if (!session) {
+    return <Redirect href={'/(auth)'}/>
+  }
 
+  useEffect(() => {
     if (session && checkTokenExpiration(session)) { // basic useeffect check yesyes
       signOut();
     }
+  }, []);
 
+  useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => { // signout if expired on each active state
       if (nextAppState === 'active') {
         console.log('window active')
@@ -39,6 +45,7 @@ export default function RootLayout() {
 
   return (
     <>
+      <StatusBar style={'dark'}/>
       <Drawer drawerContent={CustomDrawerContext}>
         <Drawer.Screen name={'index'} options={{
           headerTitle: 'Modeus',
@@ -47,7 +54,6 @@ export default function RootLayout() {
 
         </Drawer.Screen>
       </Drawer>
-      <StatusBar style={'dark'}/>
     </>
   )
 

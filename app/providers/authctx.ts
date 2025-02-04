@@ -1,5 +1,6 @@
-import {createContext, useContext, useEffect} from "react";
-import {useRouter, useSegments} from "expo-router";
+import {createContext, useContext, useEffect, useState} from "react";
+import {useRootNavigationState, useRouter, useSegments, Redirect} from "expo-router";
+import {setState} from "jest-circus";
 
 export const AuthContext = createContext<{
   signIn: (token: string) => void;
@@ -26,22 +27,19 @@ export function useSession() {
 }
 
 export function useProtectedRoute(session: string | null) {
-  const segments = useSegments()
-  const router = useRouter()
+  const segments = useSegments();
+  const router = useRouter();
 
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)"
 
     if (!session && !inAuthGroup) {
-
-      router.replace("/(auth)")
-
+      setTimeout(()=>{router.replace("/(auth)")});
     } else if (session && inAuthGroup) {
-
-      router.replace("/(app)")
-
+      setTimeout(()=>{router.replace("/(app)")});
     }
   }, [session, segments])
+
 }
 
 

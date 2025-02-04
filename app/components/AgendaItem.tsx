@@ -8,7 +8,7 @@ interface AgendaProps {
 
 function AgendaItem(props: AgendaProps) {
   const {item} = props;
-  console.log(item)
+  // console.log(item)
 
   if (objectIsEmpty(item)) {
     return (
@@ -29,7 +29,8 @@ function AgendaItem(props: AgendaProps) {
       </View>
       <Text>{item.title}</Text>
       <Text>{item.location}</Text>
-      <Text>{item.organizer}</Text>
+      {Array.isArray(item.organizer) ? item.organizer.map((organizer: string) => <Text>{organizer}</Text>) : <Text>{item.organizer}</Text>}
+
     </TouchableOpacity>
 
 

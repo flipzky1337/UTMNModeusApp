@@ -6,6 +6,8 @@ import {useCallback, useEffect, useState} from "react";
 import {getCalendarEvents} from "@/app/functions/ModeusAPIFunctions";
 import {getUserID} from "@/app/functions/JWTFunctions";
 import AgendaItem from "@/app/components/AgendaItem";
+import {jwtDecode} from "jwt-decode";
+import {Redirect} from "expo-router";
 
 interface AgendaItemType {
   title: string,
@@ -13,10 +15,7 @@ interface AgendaItemType {
 }
 
 export default function Index() {
-  const {session} = useSession();
-  // @ts-ignore it's cant be null if session is true
-  const currentUser = getUserID(session);
-
+  const {session, signOut} = useSession();
   const today = new Date().toISOString().split('T')[0];
   const [agendaItems, setAgendaItems] = useState([] as AgendaItemType[]);
 
@@ -34,6 +33,7 @@ export default function Index() {
 
   const onMonthChange = useCallback(({dateString}: DateData) => {
     const {timeMin, timeMax} = getMonthStartEnd(new Date(dateString).getFullYear(), new Date(dateString).getMonth());
+    const currentUser = getUserID(session);
     getCalendarEvents({
       token: session,
       timeMin: timeMin,
@@ -44,6 +44,8 @@ export default function Index() {
 
   if (session) { // fetch data on useeffect if session
     useEffect(() => {
+
+      const currentUser = getUserID(session);
 
       if (currentUser) {
         const {timeMin, timeMax} = getMonthStartEnd(new Date().getFullYear(), new Date().getMonth());
