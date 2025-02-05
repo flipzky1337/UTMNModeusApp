@@ -6,6 +6,45 @@ type getCalendarEventsParams = {
   timeMin: string,
   timeMax: string,
   attendeePersonId: string[]
+};
+
+export const eventTypes = {
+  "LECT": {
+    "name": "Лекционное занятие",
+    "color": "#FFDDC1"  // Light orange
+  },
+  "SEMI": {
+    "name": "Практическое занятие",
+    "color": "#C1FFD7"  // Light green
+  },
+  "LAB": {
+    "name": "Лабораторное занятие",
+    "color": "#C1D7FF"  // Light blue
+  },
+  "CUR_CHECK": {
+    "name": "Текущий контроль",
+    "color": "#FFC1E3"  // Light pink
+  },
+  "CONS": {
+    "name": "Консультация",
+    "color": "#E3C1FF"  // Light purple
+  },
+  "EVENT_OTHER": {
+    "name": "Прочее",
+    "color": "#D3D3D3"  // Light gray
+  },
+  "SELF": {
+    "name": "Самостоятельная работа",
+    "color": "#FFFFC1"  // Light yellow
+  },
+  "FINAL_CHECK": {
+    "name": "Итоговая аттестация",
+    "color": "#FFC1C1"  // Light red
+  },
+  "MID_CHECK": {
+    "name": "Аттестация",
+    "color": "#C1FFFF"  // Light cyan
+  }
 }
 
 // @ts-ignore
@@ -16,6 +55,11 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
     if (!Object.hasOwn(response, 'events')) {
       return [];
     }
+
+    let unitNames = {};
+    response['course-unit-realizations'].map((item: object) => {
+      unitNames[item._links.self.href] = item.nameShort
+    })
 
     const eventRooms = response['event-rooms'];
     for (const eventRoom of eventRooms) {
@@ -63,11 +107,21 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
         ? eventAttendeesLinks.map((link: any) => link.href)
         : [eventAttendeesLinks.href];
 
+      eventOrganizer.name = []
+
       // Check each attendee for a matching href
       for (const attendee of attendees) {
-        if (hrefs.includes(attendee._links.self.href)) {
-          eventOrganizer.name = attendee.name;
-          break; // Stop after the first match
+        // if (hrefs.includes(attendee._links.self.href)) {
+        //   eventOrganizer.name = attendee.name;
+        //   break; // Stop after the first match
+        // }
+        for (const href of hrefs) {
+          if (href == attendee._links.self.href) {
+            eventOrganizer.name.push(attendee.name);
+            if (eventOrganizer.name.length == hrefs.length) {
+              break;
+            }
+          }
         }
       }
     });
@@ -81,9 +135,12 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
       const eventLocation = response['event-locations'][index].customLocation;
       const organizer = response['event-organizers'][index].name;
       const readyObj = {
+        id: event.id,
         title: event.name,
+        unitShort: unitNames[event._links['course-unit-realization'].href],
         location: eventLocation,
         organizer: organizer,
+        type: event.typeId,
         timeStart: event.startsAtLocal.split('T')[1],
         timeEnd: event.endsAtLocal.split('T')[1],
       };
@@ -118,7 +175,8 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
 
     });
 
-    final.sort(function(a, b) {
+    final.sort(function (a, b) {
+      // @ts-ignore schizo error, it still could be subtracted.
       return new Date(a.title) - new Date(b.title);
     });
     return final;
@@ -131,5 +189,10 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     }, method: 'POST', body: JSON.stringify({timeMin, timeMax, attendeePersonId, size: 250})
-  }).then(res => res.json()).then(res => res._embedded).then(res => preprocessing(res))
+  }).then((res) => {
+    if (res.ok) {
+      return res.json()
+    }
+    throw new Error('something went wrong')
+  }).then(res => res._embedded).then(res => preprocessing(res))
 }
