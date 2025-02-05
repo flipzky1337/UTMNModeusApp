@@ -10,7 +10,7 @@ export default function Auth() {
     const [showBrowser, setShowBrowser] = useState(false);
 
     return (
-        <View style={{height: '100%', width: '100%', marginTop: top}}>
+        <View className={'flex'} style={{height: '100%', width: '100%', alignItems:'center', justifyContent:'center', marginTop: top}}>
             {/*<Pressable onPress={() => {setShowBrowser(true);}}>*/}
             {/*    <Text>*/}
             {/*        Авторизоваться*/}

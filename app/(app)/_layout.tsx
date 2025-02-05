@@ -6,7 +6,7 @@ import {useSession} from "@/app/providers/authctx";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {useEffect, useRef, useState} from "react";
 import {checkTokenExpiration} from "@/app/functions/JWTFunctions";
-import {AntDesign} from "@expo/vector-icons";
+import {AntDesign, Entypo} from "@expo/vector-icons";
 import {Redirect, router} from "expo-router";
 
 export default function RootLayout() {
@@ -48,6 +48,8 @@ export default function RootLayout() {
       <StatusBar style={'dark'}/>
       <Drawer drawerContent={CustomDrawerContext}>
         <Drawer.Screen name={'index'} options={{
+          drawerIcon: () => <Entypo name={'calendar'}></Entypo>,
+          drawerLabel: () => <Text>Расписание</Text>,
           headerTitle: 'Modeus',
           headerRight: () => <Pressable className={'mr-4'}><AntDesign name={'filter'} size={24}/></Pressable>, // TODO: correct margin & sizing
         }}>
@@ -71,7 +73,7 @@ function CustomDrawerContext(props: any) {
       </DrawerContentScrollView>
 
       <Pressable onPress={signOut} style={{paddingBottom: bottom+20, paddingLeft: 20}}>
-        <Text>Выйти</Text>
+        <Text className={'font-bold text-xl'}>Выйти</Text>
       </Pressable>
     </View>
   )
