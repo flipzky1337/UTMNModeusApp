@@ -6,7 +6,7 @@ import {useSession} from "@/app/providers/authctx";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {useEffect, useRef, useState} from "react";
 import {checkTokenExpiration} from "@/app/functions/JWTFunctions";
-import {AntDesign, Entypo} from "@expo/vector-icons";
+import {AntDesign, Entypo, FontAwesome} from "@expo/vector-icons";
 import {Redirect, router} from "expo-router";
 
 export default function RootLayout() {
@@ -53,6 +53,12 @@ export default function RootLayout() {
           headerTitle: 'Modeus',
           headerRight: () => <Pressable className={'mr-4'}><AntDesign name={'filter'} size={24}/></Pressable>, // TODO: correct margin & sizing
         }}>
+        </Drawer.Screen>
+        <Drawer.Screen name={'profile'} options={{
+          drawerIcon: () => <FontAwesome  name={'user'}/>,
+          drawerLabel: () => <Text>Профиль и оценки</Text>,
+          headerTitle: 'Мои оценки'
+        }}>
 
         </Drawer.Screen>
       </Drawer>
@@ -62,7 +68,6 @@ export default function RootLayout() {
 }
 
 function CustomDrawerContext(props: any) {
-
   const {bottom} = useSafeAreaInsets();
   const {signOut} = useSession()
 
@@ -72,7 +77,7 @@ function CustomDrawerContext(props: any) {
         <DrawerItemList {...props}/>
       </DrawerContentScrollView>
 
-      <Pressable onPress={signOut} style={{paddingBottom: bottom+20, paddingLeft: 20}}>
+      <Pressable onPress={signOut} style={{paddingBottom: bottom + 20, paddingLeft: 20}}>
         <Text className={'font-bold text-xl'}>Выйти</Text>
       </Pressable>
     </View>

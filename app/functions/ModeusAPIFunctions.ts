@@ -1,5 +1,7 @@
 import {fetch} from "expo/fetch";
 import {isLaterHHMM} from "@/app/functions/UtilityFunctions";
+import {ToastAndroid} from "react-native";
+import {secondaryRequestBodyInterface} from "@/app/types/ModeusAPITypes";
 
 type getCalendarEventsParams = {
   token: string
@@ -8,43 +10,23 @@ type getCalendarEventsParams = {
   attendeePersonId: string[]
 };
 
-export const eventTypes = {
-  "LECT": {
-    "name": "Лекционное занятие",
-    "color": "#FFDDC1"  // Light orange
-  },
-  "SEMI": {
-    "name": "Практическое занятие",
-    "color": "#C1FFD7"  // Light green
-  },
-  "LAB": {
-    "name": "Лабораторное занятие",
-    "color": "#C1D7FF"  // Light blue
-  },
-  "CUR_CHECK": {
-    "name": "Текущий контроль",
-    "color": "#FFC1E3"  // Light pink
-  },
-  "CONS": {
-    "name": "Консультация",
-    "color": "#E3C1FF"  // Light purple
-  },
-  "EVENT_OTHER": {
-    "name": "Прочее",
-    "color": "#D3D3D3"  // Light gray
-  },
-  "SELF": {
-    "name": "Самостоятельная работа",
-    "color": "#FFFFC1"  // Light yellow
-  },
-  "FINAL_CHECK": {
-    "name": "Итоговая аттестация",
-    "color": "#FFC1C1"  // Light red
-  },
-  "MID_CHECK": {
-    "name": "Аттестация",
-    "color": "#C1FFFF"  // Light cyan
-  }
+interface requestPostBodyPrimary {
+  personId: string;
+  withMidcheckModulesIncluded: boolean;
+  aprId: string;
+  academicPeriodStartDate: string; // ISO date string
+  academicPeriodEndDate: string; // ISO date string
+  studentId: string;
+  curriculumFlowId: string;
+  curriculumPlanId: string;
+};
+
+const showUnauthorizedToast = () => {
+  ToastAndroid.show("Проблемы с авторизацией, пожалуйста перезайдите в приложение.", ToastAndroid.SHORT);
+}
+
+const showUnknownErrorToast = () => {
+  ToastAndroid.show("Неизвестная ошибка.", ToastAndroid.SHORT);
 }
 
 // @ts-ignore
@@ -182,8 +164,6 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
     return final;
   }
 
-
-  // TODO: alert when token expired
   return await fetch('https://utmn.modeus.org/schedule-calendar-v2/api/calendar/events/search', {
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -193,6 +173,106 @@ export async function getCalendarEvents({token, timeMin, timeMax, attendeePerson
     if (res.ok) {
       return res.json()
     }
-    throw new Error('something went wrong')
-  }).then(res => res._embedded).then(res => preprocessing(res))
+
+    if (res.status == 401) {
+      showUnauthorizedToast();
+    }
+
+    showUnknownErrorToast();
+    throw new Error('something went wrong while getting primary results')
+  }).then(res => res._embedded).then(res => preprocessing(res));
+}
+
+export async function getPrimaryResults(token: string) {
+  return await fetch('https://utmn.modeus.org/students-app/api/pages/student-card/my/primary', {
+    headers: {'Authorization': `Bearer ${token}`},
+    method: 'GET'
+  }).then((res) => {
+    if (res.ok) {
+      return res.json()
+    }
+
+    if (res.status == 401) {
+      showUnauthorizedToast();
+    }
+
+    showUnknownErrorToast();
+    throw new Error('something went wrong while getting primary results')
+  })
+}
+
+export async function getPostPrimaryResults(token: string, {
+  personId,
+  academicPeriodStartDate,
+  academicPeriodEndDate,
+  curriculumFlowId,
+  curriculumPlanId,
+  withMidcheckModulesIncluded,
+  studentId,
+  aprId
+}: requestPostBodyPrimary) {
+  return await fetch('https://utmn.modeus.org/students-app/api/pages/student-card/my/academic-period-results-table/primary', {
+    headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+    method: 'POST',
+    body: JSON.stringify({
+      personId,
+      withMidcheckModulesIncluded,
+      aprId,
+      academicPeriodStartDate,
+      academicPeriodEndDate,
+      studentId,
+      curriculumFlowId,
+      curriculumPlanId
+    })
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+
+    if (res.status == 401) {
+      showUnauthorizedToast();
+    }
+
+    showUnknownErrorToast();
+    throw new Error('something went wrong while getting post primaryData request')
+  })
+}
+
+export async function postSecondaryResults(token: string, {
+  courseUnitRealizationId,
+  academicCourseId,
+  lessonId,
+  lessonRealizationTemplateId,
+  personId,
+  aprId,
+  academicPeriodStartDate,
+  academicPeriodEndDate,
+  studentId
+}: secondaryRequestBodyInterface) {
+  return await fetch('https://utmn.modeus.org/students-app/api/pages/student-card/my/academic-period-results-table/secondary', {
+    headers: {'Authorization': `Bearer ${token}`},
+    method: 'POST',
+    body: JSON.stringify({
+      courseUnitRealizationId,
+      academicCourseId,
+      lessonId,
+      lessonRealizationTemplateId,
+      personId,
+      aprId,
+      academicPeriodStartDate,
+      academicPeriodEndDate,
+      studentId
+    })
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+
+    if (res.status == 401) {
+      showUnauthorizedToast();
+    }
+
+    showUnknownErrorToast();
+    throw new Error('something went wrong while getting post secondaryData request')
+  })
 }

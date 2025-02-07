@@ -2,11 +2,12 @@ import {View} from "react-native";
 import {useSession} from "@/app/providers/authctx";
 import {AgendaList, CalendarProvider, DateData, ExpandableCalendar} from "react-native-calendars";
 import {Suspense, useCallback, useEffect, useState} from "react";
-import {eventTypes, getCalendarEvents} from "@/app/functions/ModeusAPIFunctions";
+import {getCalendarEvents} from "@/app/functions/ModeusAPIFunctions";
 import {getUserID} from "@/app/functions/JWTFunctions";
 import AgendaItem from "@/app/components/AgendaItem";
 import {MarkedDates} from "react-native-calendars/src/types";
 import {LocaleConfig} from "react-native-calendars";
+import {eventTypes} from "@/app/types/ModeusAPITypes";
 
 LocaleConfig.locales['ru'] = {
   monthNames: [

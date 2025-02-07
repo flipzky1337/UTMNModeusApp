@@ -17,3 +17,7 @@ export function objectIsEmpty(obj: object) {
 
   return true;
 }
+
+export function toRussianDateShort(date: string) {
+  return new Date(date).toLocaleDateString();
+}

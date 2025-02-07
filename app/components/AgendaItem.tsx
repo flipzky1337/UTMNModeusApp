@@ -3,7 +3,7 @@ import {memo} from "react";
 import {objectIsEmpty} from "@/app/functions/UtilityFunctions";
 import {MarkedDates} from "react-native-calendars/src/types";
 import {Entypo} from "@expo/vector-icons";
-import {eventTypes} from "@/app/functions/ModeusAPIFunctions";
+import {eventTypes} from "@/app/types/ModeusAPITypes";
 
 interface AgendaProps {
   item: any
@@ -33,16 +33,35 @@ function AgendaItem(props: AgendaProps) {
     )
   }
 
-  if (item.organizer.length == 1) {
-    organizers = item.organizer
-  } else {
-    item.organizer.slice(0, 3).map((org: string, idx: number) => {
-      organizers += org + ', '
-      if (idx == 2) {
-        organizers += '...'
-      }
-    })
+  const maxIndex = item.organizer.length >= 3 ? 3 : item.organizer.length
+  item.organizer.slice(0, maxIndex).map((org: string, idx: number) => {
+    if (idx == maxIndex - 1) {
+      organizers += org;
+    } else {
+      organizers += org + ', ';
+    }
+  });
+
+  if (maxIndex == 3) {
+    organizers += '...';
   }
+
+
+  // if (item.organizer.length == 1) {
+  //   organizers = item.organizer
+  // } else {
+  //
+  //
+  //   item.organizer.slice(0, lastIndex).map((org: string, idx: number) => {
+  //     organizers += org + ', '
+  //
+  //     if item
+  //
+  //     if (idx == 2) {
+  //       organizers += '...'
+  //     }
+  //   })
+  // }
 
   return (
     <TouchableOpacity className={'mb-2 px-4 bg-white'}>
@@ -82,11 +101,3 @@ function AgendaItem(props: AgendaProps) {
 }
 
 export default memo(AgendaItem)
-
-function getMarkersForDays() {
-  const marked: MarkedDates = {};
-
-  agendaItems.forEach(item => {
-
-  })
-}
