@@ -212,7 +212,7 @@ export async function getPostPrimaryResults(token: string, {
   aprId
 }: requestPostBodyPrimary) {
   return await fetch('https://utmn.modeus.org/students-app/api/pages/student-card/my/academic-period-results-table/primary', {
-    headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+    headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'Accept': '*/*'},
     method: 'POST',
     body: JSON.stringify({
       personId,
@@ -235,7 +235,7 @@ export async function getPostPrimaryResults(token: string, {
 
     showUnknownErrorToast();
     throw new Error('something went wrong while getting post primaryData request')
-  })
+  });
 }
 
 export async function postSecondaryResults(token: string, {
@@ -250,7 +250,7 @@ export async function postSecondaryResults(token: string, {
   studentId
 }: secondaryRequestBodyInterface) {
   return await fetch('https://utmn.modeus.org/students-app/api/pages/student-card/my/academic-period-results-table/secondary', {
-    headers: {'Authorization': `Bearer ${token}`},
+    headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
     method: 'POST',
     body: JSON.stringify({
       courseUnitRealizationId,

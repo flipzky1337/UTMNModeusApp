@@ -21,3 +21,7 @@ export function objectIsEmpty(obj: object) {
 export function toRussianDateShort(date: string) {
   return new Date(date).toLocaleDateString();
 }
+
+export function dateStringToIsoString(date: string){
+  return new Date(date).toISOString();
+}
