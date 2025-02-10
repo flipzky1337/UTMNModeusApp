@@ -16,7 +16,7 @@ export function SessionProvider({children}: PropsWithChildren) {
           setSession(token);
         },
         signOut: () => {
-          router.replace("/(auth)")
+          // router.replace("/(auth)")
           setSession(null);
         },
         session,

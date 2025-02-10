@@ -1,12 +1,12 @@
 import {View, Text, TouchableOpacity} from "react-native"
 import {memo} from "react";
-import {objectIsEmpty} from "@/app/functions/UtilityFunctions";
-import {MarkedDates} from "react-native-calendars/src/types";
+import {getMonthStartEnd, objectIsEmpty} from "@/app/functions/UtilityFunctions";
 import {Entypo} from "@expo/vector-icons";
 import {eventTypes} from "@/app/types/ModeusAPITypes";
+import {generateDay} from "react-native-calendars/src/dateutils";
 
 interface AgendaProps {
-  item: any
+  item: agendaPropItemType
 }
 
 type agendaPropItemType = {
@@ -18,12 +18,25 @@ type agendaPropItemType = {
   timeEnd: string,
 }
 
+export function fillBlank(props: {}[], selDate: string | Date) {
+  const date = typeof selDate == "string" ? new Date(selDate) : selDate
+  const start = new Date(Date.UTC(date.getFullYear(), date.getMonth(), 1));
+  const end = new Date(Date.UTC(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59));
+
+  let tempDate = new Date(start);
+  while (tempDate != end) {
+
+  }
+}
+
 function AgendaItem(props: AgendaProps) {
   const {item} = props;
   let organizers = '';
-  // console.log(item)
 
-  if (objectIsEmpty(item)) {
+  console.log(props)
+
+  if (!item) {
+
     return (
       <TouchableOpacity>
         <Text>

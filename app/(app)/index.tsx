@@ -4,10 +4,12 @@ import {AgendaList, CalendarProvider, DateData, ExpandableCalendar} from "react-
 import {Suspense, useCallback, useEffect, useState} from "react";
 import {getCalendarEvents} from "@/app/functions/ModeusAPIFunctions";
 import {getUserID} from "@/app/functions/JWTFunctions";
-import AgendaItem from "@/app/components/AgendaItem";
+import AgendaItem, {fillBlank, limitAgendaToWeek} from "@/app/components/AgendaItem";
 import {MarkedDates} from "react-native-calendars/src/types";
 import {LocaleConfig} from "react-native-calendars";
 import {eventTypes} from "@/app/types/ModeusAPITypes";
+import {getMonthStartEnd} from "@/app/functions/UtilityFunctions";
+import InfiniteAgendaList from "react-native-calendars/src/expandableCalendar/infiniteAgendaList";
 
 LocaleConfig.locales['ru'] = {
   monthNames: [
@@ -40,20 +42,9 @@ export default function Index() {
   const [agendaItems, setAgendaItems] = useState([] as AgendaItemType[]);
   const [markerDots, setDots] = useState({} as MarkedDates)
 
-  function getMonthStartEnd(year: number, month: number) {
-    const start = new Date(Date.UTC(year, month, 1));
-    const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
-
-    const formatDate = (date: Date) => date.toISOString().split('.')[0] + 'Z';
-
-    const timeMin = formatDate(start);
-    const timeMax = formatDate(end);
-
-    return {timeMin, timeMax};
-  }
-
   const onMonthChange = useCallback(({dateString}: DateData) => {
     const {timeMin, timeMax} = getMonthStartEnd(new Date(dateString).getFullYear(), new Date(dateString).getMonth());
+    // @ts-ignore it is string anyways, layout controls the background session checking
     const currentUser = getUserID(session);
     getCalendarEvents({
       token: session,
@@ -115,8 +106,10 @@ export default function Index() {
           }
         </ExpandableCalendar>
         <Suspense fallback={'asdf'}>
-          <AgendaList sections={agendaItems} renderItem={renderAgendaItem}></AgendaList>
+          <AgendaList sections={agendaItems} renderItem={renderAgendaItem}>
+          </AgendaList>
         </Suspense>
+        {/*<InfiniteAgendaList sections={agendaItems} renderItem={renderAgendaItem}></InfiniteAgendaList>*/}
 
       </CalendarProvider>
     </View>

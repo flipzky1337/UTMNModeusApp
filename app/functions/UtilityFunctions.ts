@@ -25,3 +25,15 @@ export function toRussianDateShort(date: string) {
 export function dateStringToIsoString(date: string){
   return new Date(date).toISOString();
 }
+
+export function getMonthStartEnd(year: number, month: number) {
+  const start = new Date(Date.UTC(year, month, 1));
+  const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
+
+  const formatDate = (date: Date) => date.toISOString().split('.')[0] + 'Z';
+
+  const timeMin = formatDate(start);
+  const timeMax = formatDate(end);
+
+  return {timeMin, timeMax};
+}
