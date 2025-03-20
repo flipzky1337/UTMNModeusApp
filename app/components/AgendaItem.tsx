@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from "react-native"
+import {View, Text, TouchableOpacity, Pressable} from "react-native"
 import {memo} from "react";
 import {getMonthStartEnd, objectIsEmpty} from "@/app/functions/UtilityFunctions";
 import {Entypo} from "@expo/vector-icons";
@@ -33,10 +33,7 @@ function AgendaItem(props: AgendaProps) {
   const {item} = props;
   let organizers = '';
 
-  console.log(props)
-
-  if (!item) {
-
+  if (!item || Object.keys(item).length === 0) {
     return (
       <TouchableOpacity>
         <Text>
@@ -77,10 +74,10 @@ function AgendaItem(props: AgendaProps) {
   // }
 
   return (
-    <TouchableOpacity className={'mb-2 px-4 bg-white'}>
-      <View className={'flex-1'}>
+    <TouchableOpacity className={'h-[180] mb-[10] px-4 bg-white'}>
+      <View className={'flex flex-col h-full justify-center'}>
         <View>
-          <View className={'flex-1 flex-row justify-between'} style={{alignItems: 'center'}}>
+          <View className={'flex flex-row justify-between'} style={{alignItems: 'center'}}>
             <Text className={'font-bold text-2xl'}>
               {item.timeStart.slice(0, -3)} - {item.timeEnd.slice(0, -3)}
             </Text>
@@ -90,26 +87,27 @@ function AgendaItem(props: AgendaProps) {
           </View>
           <Text className={'text-lg'}>{item.title}</Text>
         </View>
-        <View className={'flex-row gap-2'} style={{alignItems: 'center'}}><Entypo name={'open-book'}></Entypo><Text
-          className={'text-lg'}>{item.unitShort}</Text></View>
-        <View className={'flex-row gap-2'} style={{alignItems: 'center'}}><Entypo name={'location-pin'}></Entypo><Text
-          className={'text-lg'}>{item.location}</Text></View>
-        <View className={'flex-row gap-2'} style={{alignItems: 'center'}}><Entypo name={'users'}></Entypo>{
-          <Text className={'text-lg'} numberOfLines={3} style={{flex: 1, flexWrap: 'wrap'}}>
-            {/*{item.organizer.slice(0, 3).map((organizer: string, index: number) => {*/}
-            {/*  if (item.organizer.length == 1) {*/}
-            {/*    return item.organizer.length*/}
-            {/*  } else {*/}
-            {/*    return organizer + ', '*/}
-            {/*  }*/}
-            {/*})}*/}
-            {organizers}
-          </Text>
-        }</View>
+        <View>
+          <View className={'flex-row gap-2'} style={{alignItems: 'center'}}><Entypo name={'open-book'}></Entypo><Text
+            className={'text-lg'}>{item.unitShort}</Text></View>
+          <View className={'flex-row gap-2'} style={{alignItems: 'center'}}><Entypo name={'location-pin'}></Entypo><Text
+            className={'text-lg'}>{item.location}</Text></View>
+          <View className={'flex-row gap-2'} style={{alignItems: 'center'}}><Entypo name={'users'}></Entypo>{
+            <Text className={'text-lg'} numberOfLines={3} style={{flex: 1, flexWrap: 'wrap'}}>
+              {/*{item.organizer.slice(0, 3).map((organizer: string, index: number) => {*/}
+              {/*  if (item.organizer.length == 1) {*/}
+              {/*    return item.organizer.length*/}
+              {/*  } else {*/}
+              {/*    return organizer + ', '*/}
+              {/*  }*/}
+              {/*})}*/}
+              {organizers}
+            </Text>
+          }</View>
+        </View>
+        
       </View>
     </TouchableOpacity>
-
-
   )
 }
 

@@ -15,12 +15,10 @@ export default function RootLayout() {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
-  if (!session) {
-    return <Redirect href={'/(auth)'}/>
-  }
+  
 
   useEffect(() => {
-    if (session && checkTokenExpiration(session)) { // basic useeffect check yesyes
+    if (!session || checkTokenExpiration(session)) { // basic useeffect check yesyes
       signOut();
     }
   }, []);
@@ -42,6 +40,10 @@ export default function RootLayout() {
       subscription.remove();
     };
   }, []);
+
+  if (!session) {
+    return <Redirect href={'/(auth)'}/>
+  }
 
   return (
     <>
