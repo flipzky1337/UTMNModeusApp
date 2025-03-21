@@ -5,7 +5,6 @@ import {
   CalendarProvider,
   DateData,
   ExpandableCalendar,
-  InfiniteAgendaList,
 } from "react-native-calendars";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { getCalendarEvents } from "@/app/functions/ModeusAPIFunctions";
@@ -18,6 +17,7 @@ import {
   getMonthStartEnd,
   objectIsEmpty,
 } from "@/app/functions/UtilityFunctions";
+import GenericLoader from "../components/GenericLoader";
 
 LocaleConfig.locales["ru"] = {
   monthNames: [
@@ -162,15 +162,13 @@ export default function Index() {
           
         </ExpandableCalendar>
         {agendaIsLoading && calendarReady ? (
-          <View className="flex-1 justify-center align-middle">
-            <ActivityIndicator size={'large'}></ActivityIndicator>
-            <View className="items-center"><Text className="text-xl">Лоадинг плис вейт...</Text></View>
-          </View>
+          <GenericLoader/>
         ) : (
           <AgendaList
             sections={agendaItems}
             renderItem={renderAgendaItem}
-            infiniteListProps={{ itemHeight: 190, titleHeight: 50 }}
+            infiniteListProps={{ itemHeight: 190, titleHeight: 60 }}
+            sectionStyle={{height: 50, flex:1, marginBottom: 10, fontWeight: 700, fontSize: 15, textAlignVertical: 'baseline', justifyContent: "space-between"}}
           ></AgendaList>
         )}
 

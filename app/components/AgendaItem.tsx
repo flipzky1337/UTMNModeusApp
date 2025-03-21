@@ -74,7 +74,7 @@ function AgendaItem(props: AgendaProps) {
   // }
 
   return (
-    <TouchableOpacity className={'h-[180] mb-[10] px-4 bg-white'}>
+    <TouchableOpacity className={'h-[180] mb-[10] px-4 bg-white rounded-md'}>
       <View className={'flex flex-col h-full justify-center'}>
         <View>
           <View className={'flex flex-row justify-between'} style={{alignItems: 'center'}}>

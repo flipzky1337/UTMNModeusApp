@@ -4,6 +4,7 @@ import {ToastAndroid} from "react-native";
 import {Embedded, getCalendarEventsParams} from "@/app/types/calendar/events";
 import {postPrimaryRequestBodyInterface} from "@/app/types/profile/Primary";
 import {secondaryRequestBodyInterface} from "@/app/types/profile/Secondary";
+import { AttendanceDataInterface } from "../types/profile/Attendance";
 
 const showUnauthorizedToast = () => {
   ToastAndroid.show("Проблемы с авторизацией, пожалуйста перезайдите в приложение.", ToastAndroid.SHORT);
@@ -244,4 +245,31 @@ export async function postSecondaryResults(token: string, {
     showUnknownErrorToast();
     throw new Error('something went wrong while getting post secondaryData request')
   })
+}
+
+export async function getAttendanceData(token: string, studentId: string) {
+
+  function mandatorySort(attendanceRates: AttendanceDataInterface[]) { // API was developed by a complete retard, so it IS MANDATORY to sort these;
+    return attendanceRates.sort((a, b) => b.academicPeriodRealization.number - a.academicPeriodRealization.number)
+  }
+
+
+  return await fetch('https://utmn.modeus.org/students-app/api/pages/student-card/my/attendance-rates', {
+    headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+    method: 'POST',
+    body: JSON.stringify({
+      studentId
+    })
+  }).then((res) => {
+    if (res.ok) {
+      return res.json().then(data => mandatorySort(data));
+    }
+
+    if (res.status == 401) {
+      showUnauthorizedToast();
+    }
+
+    showUnknownErrorToast();
+    throw new Error('something went wrong while getting attendance rates');
+  });
 }
