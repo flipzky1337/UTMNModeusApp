@@ -21,6 +21,7 @@ import {
 import { AttendanceDataInterface } from "../types/profile/Attendance";
 import { secondaryDataInterface } from "@/app/types/profile/Secondary";
 import GenericLoader from "../components/GenericLoader";
+import AttendanceView from "@/app/components/profile/Attendance";
 
 function Profile() {
   const { session } = useSession();
@@ -113,7 +114,7 @@ function Profile() {
 
   return objectIsEmpty(primaryData) &&
     objectIsEmpty(postPrimaryData) &&
-    objectIsEmpty(secondaryData) && objectIsEmpty(attendanceData) ? (
+    objectIsEmpty(secondaryData) ? (
     <GenericLoader />
   ) : (
     <View className={"flex px-2"}>
@@ -143,13 +144,7 @@ function Profile() {
         </Text>
       </View>
 
-      <View
-        className={
-          "my-2 py-1 px-2 rounded-t-md rounded-b-md flex bg-white gap-1"
-        }
-      >
-        <Text>{attendanceData.at(0)?.academicPeriodRealization.name.split(',')[0]}</Text>
-      </View>
+      <AttendanceView attendanceData={attendanceData.at(0)}/>
     </View>
   );
 }

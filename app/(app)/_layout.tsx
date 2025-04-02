@@ -15,8 +15,6 @@ export default function RootLayout() {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
-  
-
   useEffect(() => {
     if (!session || checkTokenExpiration(session)) { // basic useeffect check yesyes
       signOut();
@@ -48,17 +46,18 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style={'dark'}/>
-      <Drawer drawerContent={CustomDrawerContext}>
+      <Drawer drawerContent={CustomDrawerContext} >
         <Drawer.Screen name={'index'} options={{
           drawerIcon: () => <Entypo name={'calendar'}></Entypo>,
-          drawerLabel: () => <Text>Расписание</Text>,
+          drawerLabel: () => <View><Text>Расписание</Text></View>,
           headerTitle: 'Modeus',
+          sceneStyle: {marginTop: },
           headerRight: () => <Pressable className={'mr-4'}><AntDesign name={'filter'} size={24}/></Pressable>, // TODO: correct margin & sizing
         }}>
         </Drawer.Screen>
         <Drawer.Screen name={'profile'} options={{
           drawerIcon: () => <FontAwesome  name={'user'}/>,
-          drawerLabel: () => <Text>Профиль и оценки</Text>,
+          drawerLabel: () => <View><Text>Профиль и оценки</Text></View>,
           headerTitle: 'Мои оценки'
         }}>
 
@@ -80,7 +79,7 @@ function CustomDrawerContext(props: any) {
       </DrawerContentScrollView>
 
       <Pressable onPress={signOut} style={{paddingBottom: bottom + 20, paddingLeft: 20}}>
-        <Text className={'font-bold text-xl'}>Выйти</Text>
+        <View><Text className={'font-bold text-xl'}>Выйти</Text></View>
       </Pressable>
     </View>
   )

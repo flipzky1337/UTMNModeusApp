@@ -1,50 +1,33 @@
-# Welcome to your Expo app 👋
+# Приложение (обёртка) для системы расписания Модеус ТюмГУ
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<b>Expo, React Native & TypeScript</b>
 
-## Get started
+## Почему?
 
-1. Install dependencies
+Меня раздражает текущее состояние веб-приложения для мобильных устройств, его производительность и отсутствие оффлайн-режима. Поэтому я решил написать обёртку для него, которая будет работать быстрее и удобнее.
 
-   ```bash
-   npm install
-   ```
+Другая причина - неправильная утилизация токенов. Текущий веб сайт постоянно забывает токены, и приходится каждый раз их вводить заново. Это не удобно, очень. CUSTIS pls fix.
 
-2. Start the app
+## Что умеет?
 
-   ```bash
-    npx expo start
-   ```
+Просмотр расписания. Просмотр пользовательского профиля (пока только личная информация и посещаемость).
 
-In the output, you'll find options to open the app in a
+## Как запустить?
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Если вы хотите запустить приложение из исходников, то следуйте инструкциям ниже. Иначе, просто воспользуйтесь apk файлом, который можно найти в разделе Releases.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Приложение написано на Expo, поэтому его можно запустить с помощью Expo Go. Для этого нужно:
 
-## Get a fresh project
+1. Установить Expo Go на телефон (или эмулятор).
+2. Клонировать репозиторий.
+3. Установить зависимости с помощью `npm install`.
+4. Запустить приложение с помощью `npm start`.
+5. Отсканировать QR-код с помощью Expo Go.
 
-When you're ready, run:
+## Что дальше?
 
-```bash
-npm run reset-project
-```
+Пока что приложение не готово к полноценному использованию. Я планирую добавить следующие функции:
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [ ] Поддержка фильтрации расписания.
+- [ ] Просмотр каждого события в расписании.
+- [ ] Просмотр успеваемости.

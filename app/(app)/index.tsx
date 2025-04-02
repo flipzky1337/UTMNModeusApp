@@ -1,10 +1,9 @@
-import { View, Text, ActivityIndicator } from "react-native";
 import { useSession } from "@/app/providers/authctx";
 import {
-  AgendaList,
+  AgendaList, Calendar,
   CalendarProvider,
   DateData,
-  ExpandableCalendar,
+  ExpandableCalendar, WeekCalendar,
 } from "react-native-calendars";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { getCalendarEvents } from "@/app/functions/ModeusAPIFunctions";
@@ -82,6 +81,7 @@ export default function Index() {
       new Date(dateString).getFullYear(),
       new Date(dateString).getMonth()
     );
+
     // @ts-ignore it is string anyways, layout controls the background session checking
     const currentUser = getUserID(session);
     getCalendarEvents({
@@ -137,45 +137,28 @@ export default function Index() {
     setDots(tempObject);
   }, []);
 
-  function handleScrollFails(info) {
-    console.log(info);
-  }
-
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
-      <CalendarProvider date={today} onMonthChange={onMonthChange}>
-        <ExpandableCalendar
-          firstDay={1}
-          markedDates={markerDots}
-          markingType={"multi-dot"}
-          onCalendarToggled={() => setCalendarReady(true)}
-        >
-          {
-            // @ts-ignore fix for defaultProps warning: https://github.com/wix/react-native-calendars/issues/2455
-            ExpandableCalendar.defaultProps = undefined
-            
-          }
-          
-        </ExpandableCalendar>
-        {agendaIsLoading && calendarReady ? (
-          <GenericLoader/>
-        ) : (
-          <AgendaList
-            sections={agendaItems}
-            renderItem={renderAgendaItem}
-            infiniteListProps={{ itemHeight: 190, titleHeight: 60 }}
-            sectionStyle={{height: 50, flex:1, marginBottom: 10, fontWeight: 700, fontSize: 15, textAlignVertical: 'baseline', justifyContent: "space-between"}}
-          ></AgendaList>
-        )}
+    <CalendarProvider date={today} onMonthChange={onMonthChange}>
+      <ExpandableCalendar
+        firstDay={1}
+        markedDates={markerDots}
+        markingType={"multi-dot"}
+        onCalendarToggled={(isOpen) => console.log(isOpen)}
+      >
+        {
+          // @ts-ignore fix for defaultProps warning: https://github.com/wix/react-native-calendars/issues/2455
+          ExpandableCalendar.defaultProps = undefined
 
-        
+        }
 
-        {/* <InfiniteAgendaList sections={agendaItems} renderItem={renderAgendaItem}></InfiniteAgendaList> */}
-      </CalendarProvider>
-    </View>
+      </ExpandableCalendar>
+
+      <AgendaList
+        sections={agendaItems}
+        renderItem={renderAgendaItem}
+        infiniteListProps={{ itemHeight: 190, titleHeight: 60, visibleIndicesChangedDebounce: 1 }}
+        sectionStyle={{height: 50, flex:1, marginBottom: 10, fontWeight: 700, fontSize: 15, textAlignVertical: 'baseline', justifyContent: "space-between"}}
+      ></AgendaList>
+    </CalendarProvider>
   );
 }
